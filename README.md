@@ -18,3 +18,9 @@ The application displays discussion areas, each with a specific topic. These are
 - Administrators can:
   - Add or remove discussion areas.
   - Create secret areas and assign specific users access to them.
+
+
+## Current state 22.9
+The application has a working login/logout and register functionality. The current schema.sql represents what tables the final product will have and some of the current tables are unused. Also logging in results in all the current messages being displayed in order of entry from oldest to newest. This was only added to test the functionality. 
+Currently missing: Adming/user privileges, Area/Thread/Message hierarchy, Deletion and search.
+How to test: Download the code and run flask in venv. Currently there is only 1 registered user with name/password being asd/asd.
