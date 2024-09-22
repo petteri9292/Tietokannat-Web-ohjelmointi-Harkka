@@ -1,7 +1,31 @@
-<form action="/send" method="POST">
-    Viesti: <br>
-    <textarea name="content" rows="3" cols="40"></textarea>
-    <br>
-    <input type="submit" value="Lähetä">
-    </form>
-    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+
+
+
+    {% if session.username %}
+        <p>Logged in as {{ session.username }}</p>
+        <a href="/logout">Kirjaudu ulos</a>
+        
+    {% else %}
+        <form action="/login" method="POST">
+            <p>Username:<br>
+            <input type="text" name="username" required></p>
+            <p>Password:<br>
+            <input type="password" name="password" required></p>
+            <input type="submit" value="Login">
+        </form>
+        {% if error %}
+        <p style="color:red;">{{ error }}</p>
+        {% endif %}
+        <!-- Registration link -->
+        <a href="/register">Register</a>
+    {% endif %}
+</body>
+</html>
