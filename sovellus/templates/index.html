@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+
+
+
+    {% if session.username %}
+        <p>Logged in as {{ session.username }}</p>
+        <p>User_role is {{ session.role }}</p>
+        <h2>Discussion Areas</h2>
+        <hr>
+        {% if areas %}
+            {% for area in areas %}
+                <h3>{{ area.name }}</h3>
+                <p>{{area.description}}</p>
+                <p>Number of Threads: {{ area.thread_count }}, Number of Messages: {{ area.message_count }}</p>
+                <hr>
+            {% endfor %}
+        {% else %}
+            <p>No discussion areas available.</p>
+        {% endif %}
+        {% if session.role == "admin" %}
+            <a href="/new_area">Create new area</a>
+        {% endif %}
+        <a href="/logout">Logout</a>
+        
+    {% else %}
+        <form action="/login" method="POST">
+            <p>Username:<br>
+            <input type="text" name="username" required></p>
+            <p>Password:<br>
+            <input type="password" name="password" required></p>
+            <input type="submit" value="Login">
+        </form>
+        {% if error %}
+        <p style="color:red;">{{ error }}</p>
+        {% endif %}
+        <!-- Registration link -->
+        <a href="/register">Register</a>
+    {% endif %}
+</body>
+</html>

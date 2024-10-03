@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Discussion Area</title>
+</head>
+<body>
+    <h1>Create a New Discussion Area</h1>
+
+    <!-- Form for creating a new discussion area -->
+    <form action="/create_area" method="POST">
+        <p>
+            <label for="name">Area Name:</label><br>
+            <input type="text" id="name" name="name" required>
+        </p>
+        <p>
+            <label for="description">Description:</label><br>
+            <textarea id="description" name="description" rows="4" cols="50" required></textarea>
+        </p>
+        <p>
+            <input type="submit" value="Create Area">
+        </p>
+    </form>
+
+    <!-- Link back to home or discussion areas list -->
+    <p><a href="/">Back to Home</a></p>
+</body>
+</html>
