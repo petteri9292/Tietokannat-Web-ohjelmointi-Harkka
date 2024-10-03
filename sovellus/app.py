@@ -81,7 +81,6 @@ def login():
     user_row = db.session.execute(user_check_query,{"username":username})
     user_row = user_row.fetchone()
     if user_row:
-        #For some reason user_row["password_hash"] doesn't work
         stored_password_hash = user_row[2]
 
         
@@ -139,3 +138,35 @@ def create_area():
     db.session.commit()
 
     return redirect("/")
+
+
+@app.route("/discussion/<int:area_id>")
+def discussion_area(area_id):
+    """
+    Discussion area function
+    
+    """
+    query = text("""
+        SELECT name FROM discussion_areas WHERE id = :area_id
+    """)
+    area = db.session.execute(query,{"area_id":area_id}).fetchone()
+    if area:
+        threads_query = text("""
+            SELECT 
+                t.id,
+                t.title,
+                t.created_at,
+                u.username AS author,
+                COUNT(m.id) AS message_count
+            FROM 
+                threads t
+            JOIN users u ON t.user_id = u.id
+            LEFT JOIN messages m ON t.id = m.thread_id
+            WHERE t.discussion_area_id = :area_id
+            GROUP BY t.id, u.username
+            ORDER BY t.created_at DESC
+        """)
+        threads = db.session.execute(threads_query,{"area_id":area_id}).fetchall()
+        return render_template("discussion_area.html", threads=threads, area=area)
+    else:
+        return "Discussion area not found", 404

@@ -3,32 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>{{ area.name }}</title>
 </head>
 <body>
-
-
-
     {% if session.username %}
         <p>Logged in as {{ session.username }}</p>
-        <p>User_role is {{ session.role }}</p>
-        <h2>Discussion Areas</h2>
+        <h2>Threads</h2>
         <hr>
-        {% if areas %}
-            {% for area in areas %}
+        {% if threads %}
+            {% for thread in threads %}
                 <h3>
-                    <a href="/discussion/{{ area.id }}">{{ area.name }}</a>
+                    {{ thread.title }}
+                    <p>Created by: {{thread.author}}, Created at {{thread.created_at}}</p>
+                    <p>Number of messages {{thread.message_count}}</p>
+                    
                 </h3>
-                <p>{{area.description}}</p>
-                <p>Number of Threads: {{ area.thread_count }}, Number of Messages: {{ area.message_count }}</p>
                 <hr>
             {% endfor %}
         {% else %}
-            <p>No discussion areas available.</p>
+            <p>No threads available.</p>
         {% endif %}
-        {% if session.role == "admin" %}
-            <a href="/new_area">Create new area</a>
-        {% endif %}
+        <a href="/new_thread">Create new area</a>
         <a href="/logout">Logout</a>
         
     {% else %}
