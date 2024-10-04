@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Discussion Area</title>
+</head>
+<body>
+    <h1>Create a New Thread</h1>
+
+    <form action="/new_thread" method="POST">
+        <p>
+            <label for="title">Thread Name:</label><br>
+            <input type="text" id="title" name="title" required>
+        </p>
+        <p>
+            <label for="First_message">Message:</label><br>
+            <textarea id="First_message" name="First_message" rows="4" cols="50" required></textarea>
+        </p>
+        <p>
+            <input type="submit" value="Create thread">
+        </p>
+    </form>
+
+    <!-- Link back to home or discussion areas list -->
+    <p><a href="/">Back to Home</a></p>
+</body>
+</html>
