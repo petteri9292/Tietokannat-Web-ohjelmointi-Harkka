@@ -34,7 +34,7 @@ The application displays discussion areas, each with a specific topic. These are
   - Delete threads or messages they’ve posted.  (Doesn't work)
   - Search for all messages containing a specific keyword. (Doesn't work)
 - Administrators can:
-  - Add or remove discussion areas. (Can add, can't remove)
+  - Add or remove discussion areas. (Works)
   - Create secret areas and assign specific users access to them. (Doesn't work)
  
 
