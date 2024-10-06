@@ -3,24 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create New Discussion Area</title>
+    <title>Create New Thread Area</title>
 </head>
 <body>
     <h1>Create a New Thread</h1>
 
-    <form action="/new_thread" method="POST">
-        <p>
-            <label for="title">Thread Name:</label><br>
-            <input type="text" id="title" name="title" required>
-        </p>
-        <p>
-            <label for="First_message">Message:</label><br>
-            <textarea id="First_message" name="First_message" rows="4" cols="50" required></textarea>
-        </p>
-        <p>
-            <input type="submit" value="Create thread">
-        </p>
-    </form>
+    <!-- Check if the user is logged in -->
+    {% if session.username %}
+        <!-- Form to create a new thread, visible only to logged-in users -->
+        <form action="/new_thread" method="POST">
+            <input type="hidden" name="area_id" value="{{ area_id }}">
+            <p>
+                <label for="title">Thread Name:</label><br>
+                <input type="text" id="title" name="title" required>
+            </p>
+            <p>
+                <label for="First_message">Message:</label><br>
+                <textarea id="First_message" name="First_message" rows="4" cols="50" required></textarea>
+            </p>
+            <p>
+                <input type="submit" value="Create thread">
+            </p>
+        </form>
+    {% else %}
+        <!-- Message for users who are not logged in -->
+        <p>You must be logged in to create a new thread. <a href="/login">Log in here</a>.</p>
+    {% endif %}
 
     <!-- Link back to home or discussion areas list -->
     <p><a href="/">Back to Home</a></p>

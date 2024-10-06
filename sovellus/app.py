@@ -5,7 +5,6 @@ from sqlalchemy.sql import text
 from os import getenv
 from werkzeug.security import check_password_hash, generate_password_hash
 from dotenv import load_dotenv
-from datetime import datetime
 load_dotenv()
 
 app = Flask(__name__)
@@ -108,13 +107,10 @@ def logout():
 @app.route("/send", methods=["POST"])
 def send():
     content = request.form["content"]
-    sql = text("INSERT INTO messages (user_id, content, created_at, updated_at) VALUES (:user_id, :content, :created_at, :updated_at)")
-    created_at = datetime.now()
+    sql = text("INSERT INTO messages (user_id, content, created_at, updated_at) VALUES (:user_id, :content, NOW(), NOW())")
     db.session.execute(sql, {
         "user_id":session["user_id"],
-        "content":content,
-        "create_at":created_at,
-        "updated_at":created_at})
+        "content":content})
     db.session.commit()
     return redirect("/")
 
@@ -128,12 +124,11 @@ def create_area():
     name = request.form["name"]
     description = request.form["description"]
     is_secret = request.form.get("is_secret") == "on"
-    created_at = datetime.now()
     sql = text("""
         INSERT INTO discussion_areas (name, description, is_secret, created_at)
-        VALUES (:name, :description, :is_secret, :created_at)
+        VALUES (:name, :description, :is_secret, NOW())
     """)
-    db.session.execute(sql, {"name": name, "description": description, "is_secret": is_secret, "created_at": created_at})
+    db.session.execute(sql, {"name": name, "description": description, "is_secret": is_secret})
     
     db.session.commit()
 
@@ -147,7 +142,7 @@ def discussion_area(area_id):
     
     """
     query = text("""
-        SELECT name FROM discussion_areas WHERE id = :area_id
+        SELECT id,name FROM discussion_areas WHERE id = :area_id
     """)
     area = db.session.execute(query,{"area_id":area_id}).fetchone()
     if area:
@@ -170,3 +165,72 @@ def discussion_area(area_id):
         return render_template("discussion_area.html", threads=threads, area=area)
     else:
         return "Discussion area not found", 404
+
+
+@app.route("/new_thread", methods=["GET", "POST"])
+def create_thread():
+    area_id = request.args.get("area_id")
+    if request.method == "POST":
+        title = request.form["title"]
+        first_message = request.form["First_message"]
+        user_id = session.get("user_id")
+
+        area_id = request.form.get("area_id")
+
+        insert_thread_query = text("""
+            INSERT INTO threads (title, user_id, discussion_area_id, created_at, updated_at)
+            VALUES (:title, :user_id, :discussion_area_id, NOW(), NOW())
+            RETURNING id
+        """)
+
+        result = db.session.execute(insert_thread_query, {
+            "title": title,
+            "user_id": user_id,
+            "discussion_area_id": area_id
+
+        })
+        thread_id = result.fetchone()[0]
+        db.session.commit()
+
+        insert_message_query = text("""
+            INSERT INTO messages (content, thread_id, user_id, created_at, updated_at)
+            VALUES (:content, :thread_id, :user_id, NOW(), NOW())
+        """)
+        
+        db.session.execute(insert_message_query, {
+            "content": first_message,
+            "thread_id": thread_id,
+            "user_id": user_id
+        })
+        db.session.commit()
+
+        return redirect(f"/thread/{thread_id}")
+    
+    # If GET request, render the thread creation form
+    return render_template("new_thread.html", area_id=area_id)
+
+
+
+@app.route("/thread/<int:thread_id>")
+def thread(thread_id):
+    """
+    Thread function
+    
+    """
+    query = text("""
+        SELECT id,title,user_id FROM threads WHERE id = :thread_id
+    """)
+    thread = db.session.execute(query,{"thread_id":thread_id}).fetchone()
+    if thread:
+        threads_query = text("""
+            SELECT 
+                *
+            FROM
+                messages
+            WHERE
+                thread_id = :thread_id
+        """)
+        messages = db.session.execute(threads_query,{"thread_id":thread_id}).fetchall()
+        return render_template("thread.html", messages=messages, thread=thread)
+    else:
+        return "Thread not found", 404

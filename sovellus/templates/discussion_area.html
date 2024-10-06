@@ -8,12 +8,15 @@
 <body>
     {% if session.username %}
         <p>Logged in as {{ session.username }}</p>
+        <h1>{{ area.name }}</h1>
+        <p>{{ area.description }}</p>
         <h2>Threads</h2>
         <hr>
         {% if threads %}
             {% for thread in threads %}
-                <h3>
-                    {{ thread.title }}
+            <a class="thread-link" href="/thread/{{ thread.id }}">
+                <h2 class="thread-title">{{ thread.title }}</h2>
+            </a>
                     <p>Created by: {{thread.author}}, Created at {{thread.created_at}}</p>
                     <p>Number of messages {{thread.message_count}}</p>
                     
@@ -23,7 +26,7 @@
         {% else %}
             <p>No threads available.</p>
         {% endif %}
-        <a href="/new_thread">Create new thread</a>
+        <a href="/new_thread?area_id={{ area.id }}">Create new thread</a>
         <a href="/logout">Logout</a>
         
     {% else %}

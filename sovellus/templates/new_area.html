@@ -8,20 +8,26 @@
 <body>
     <h1>Create a New Discussion Area</h1>
 
-    <!-- Form for creating a new discussion area -->
-    <form action="/create_area" method="POST">
-        <p>
-            <label for="name">Area Name:</label><br>
-            <input type="text" id="name" name="name" required>
-        </p>
-        <p>
-            <label for="description">Description:</label><br>
-            <textarea id="description" name="description" rows="4" cols="50" required></textarea>
-        </p>
-        <p>
-            <input type="submit" value="Create Area">
-        </p>
-    </form>
+    <!-- Check if the user is logged in and is an admin -->
+    {% if session.username and session.role == 'admin' %}
+        <!-- Form for creating a new discussion area (only visible to admins) -->
+        <form action="/create_area" method="POST">
+            <p>
+                <label for="name">Area Name:</label><br>
+                <input type="text" id="name" name="name" required>
+            </p>
+            <p>
+                <label for="description">Description:</label><br>
+                <textarea id="description" name="description" rows="4" cols="50" required></textarea>
+            </p>
+            <p>
+                <input type="submit" value="Create Area">
+            </p>
+        </form>
+    {% else %}
+        <!-- Message for users who are not logged in or are not admins -->
+        <p>You must be an admin to create a new discussion area. <a href="/login">Log in here</a>.</p>
+    {% endif %}
 
     <!-- Link back to home or discussion areas list -->
     <p><a href="/">Back to Home</a></p>
