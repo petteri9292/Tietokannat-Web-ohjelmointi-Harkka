@@ -41,6 +41,7 @@ The application displays discussion areas, each with a specific topic. These are
 The current state of the program can be find in the master branch rather than the main branch due to technical difficutlties. 
 ## How to test the program
 
+# Making a user named admin will give admin priviliges
 
 - Clone the repository and navigate within it
 - Create a virtual enviroment "python3 -m venv venv"
