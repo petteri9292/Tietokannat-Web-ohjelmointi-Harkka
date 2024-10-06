@@ -22,7 +22,8 @@ def index():
                     da.name,
                     da.description,
                     COUNT(DISTINCt t.id) AS thread_count,
-                    COUNT(m.id) AS message_count
+                    COUNT(m.id) AS message_count,
+                    MAX(m.created_at) AS last_message_date
                  FROM
                     discussion_areas da
                  LEFT JOIN threads t ON da.id = t.discussion_area_id
@@ -153,6 +154,7 @@ def discussion_area(area_id):
                 t.created_at,
                 u.username AS author,
                 COUNT(m.id) AS message_count
+                    
             FROM 
                 threads t
             JOIN users u ON t.user_id = u.id
