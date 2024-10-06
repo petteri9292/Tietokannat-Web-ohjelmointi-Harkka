@@ -10,16 +10,16 @@
         <p>{{ session.username }}</p>
         <a href="/">Home</a>
         <a href="/logout">Logout</a>
-        <h1>{{ thread.title }}</h1>
+        <h2>{{ thread.title }}</h2>
         <hr>
-        <h2>Messages</h2>
+        <h3>Messages:</h3>
 
         <!-- Display the messages in the thread -->
         {% if messages %}
             <ul>
             {% for message in messages %}
                 <li>
-                    <p><strong>{{ message.username }}</strong> said on {{ message.created_at }}:</p>
+                    <p><strong>{{ message.username }}</strong> said on {{ message.created_at.strftime(" %H:%M %d.%m.%Y ") }}</p>
                     <p>{{ message.content }}</p>
                 </li>
             {% endfor %}

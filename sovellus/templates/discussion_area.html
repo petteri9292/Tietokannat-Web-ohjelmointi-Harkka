@@ -11,15 +11,15 @@
         <a href="/">Home</a>
         <a href="/logout">Logout</a>
 
-        <h1>{{ area.name }}</h1>
+        <h2>{{ area.name }}</h2>
         <hr>
         <p>{{ area.description }}</p>
         {% if threads %}
             {% for thread in threads %}
             <a class="thread-link" href="/thread/{{ thread.id }}">
-                <h2 class="thread-title">{{ thread.title }}</h2>
+                <h3 class="thread-title">{{ thread.title }}</h3>
             </a>
-                    <p>Created by: {{thread.author}}, Created at {{thread.created_at}}</p>
+                    <p>Created by: {{thread.author}}, Created at {{thread.created_at.strftime(" %H:%M %d.%m.%Y ")}}</p>
                     <p>Number of messages {{thread.message_count}}</p>
                     
                 </h3>
