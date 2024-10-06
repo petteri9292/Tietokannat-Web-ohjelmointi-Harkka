@@ -6,25 +6,27 @@
     <title>{{ thread.title }}</title>
 </head>
 <body>
-    <h1>{{ thread.title }}</h1>
-    <h2>Messages</h2>
-
-    <!-- Display the messages in the thread -->
-    {% if messages %}
-        <ul>
-        {% for message in messages %}
-            <li>
-                <p><strong>{{ message.username }}</strong> said on {{ message.created_at }}:</p>
-                <p>{{ message.content }}</p>
-            </li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No messages in this thread.</p>
-    {% endif %}
-
-    <!-- Check if the user is logged in before showing reply form -->
     {% if session.username %}
+        <p>{{ session.username }}</p>
+        <a href="/">Home</a>
+        <a href="/logout">Logout</a>
+        <h1>{{ thread.title }}</h1>
+        <hr>
+        <h2>Messages</h2>
+
+        <!-- Display the messages in the thread -->
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>
+                    <p><strong>{{ message.username }}</strong> said on {{ message.created_at }}:</p>
+                    <p>{{ message.content }}</p>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No messages in this thread.</p>
+        {% endif %}
         <h3>Post a Reply</h3>
         <form action="/post_reply" method="POST">
             <input type="hidden" name="thread_id" value="{{ thread.id }}">
@@ -35,11 +37,23 @@
                 <input type="submit" value="Post Reply">
             </p>
         </form>
+        <a href="/discussion/{{ area.id }}">Return</a>
     {% else %}
-        <p>You must be logged in to post a reply. <a href="/login">Log in here</a>.</p>
+        <form action="/login" method="POST">
+            <p>Username:<br>
+            <input type="text" name="username" required></p>
+            <p>Password:<br>
+            <input type="password" name="password" required></p>
+            <input type="submit" value="Login">
+        </form>
+        {% if error %}
+        <p style="color:red;">{{ error }}</p>
+        {% endif %}
+        <!-- Registration link -->
+        <a href="/register">Register</a>
     {% endif %}
+    
 
-    <!-- Add a link to go back to the discussion area -->
-    <p><a href="/">Back home</a></p>
+
 </body>
 </html>

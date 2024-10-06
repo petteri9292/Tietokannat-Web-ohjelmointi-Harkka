@@ -250,8 +250,23 @@ def thread(thread_id):
             ORDER BY m.created_at ASC
         """)
         messages = db.session.execute(messages_query,{"thread_id":thread_id}).fetchall()
-        print(messages)
-        return render_template("thread.html", messages=messages, thread=thread)
+
+        area_query = text("""
+            SELECT
+                da.id
+            FROM
+                discussion_areas da
+            JOIN
+                threads t
+            ON 
+                da.id = t.discussion_area_id
+            WHERE
+                t.id = :thread_id
+        """)
+        area = db.session.execute(area_query,{"thread_id":thread_id}).fetchone()
+        print(area)
+
+        return render_template("thread.html", messages=messages, thread=thread,area=area)
     else:
         return "Thread not found", 404
     

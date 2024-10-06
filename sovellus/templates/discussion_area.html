@@ -7,11 +7,13 @@
 </head>
 <body>
     {% if session.username %}
-        <p>Logged in as {{ session.username }}</p>
+        <p>{{ session.username }}</p>
+        <a href="/">Home</a>
+        <a href="/logout">Logout</a>
+
         <h1>{{ area.name }}</h1>
-        <p>{{ area.description }}</p>
-        <h2>Threads</h2>
         <hr>
+        <p>{{ area.description }}</p>
         {% if threads %}
             {% for thread in threads %}
             <a class="thread-link" href="/thread/{{ thread.id }}">
@@ -27,7 +29,7 @@
             <p>No threads available.</p>
         {% endif %}
         <a href="/new_thread?area_id={{ area.id }}">Create new thread</a>
-        <a href="/logout">Logout</a>
+
         
     {% else %}
         <form action="/login" method="POST">
