@@ -83,7 +83,6 @@ def login():
     if user_row:
         stored_password_hash = user_row[2]
 
-        
         if check_password_hash(stored_password_hash, password):
             
             session["username"] = username
@@ -230,11 +229,12 @@ def thread(thread_id):
                 m.created_at, 
                 u.username
             FROM messages m
-            JOIN users u ON m.user_id = u.id 
+            LEFT JOIN users u ON m.user_id = u.id
             WHERE m.thread_id = :thread_id
             ORDER BY m.created_at ASC
         """)
         messages = db.session.execute(messages_query,{"thread_id":thread_id}).fetchall()
+        print(messages)
         return render_template("thread.html", messages=messages, thread=thread)
     else:
         return "Thread not found", 404
