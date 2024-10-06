@@ -20,7 +20,33 @@ The application displays discussion areas, each with a specific topic. These are
   - Create secret areas and assign specific users access to them.
 
 
-## Current state 22.9
-The application has a working login/logout and register functionality. The current schema.sql represents what tables the final product will have and some of the current tables are unused. Also logging in results in all the current messages being displayed in order of entry from oldest to newest. This was only added to test the functionality. 
-Currently missing: Adming/user privileges, Area/Thread/Message hierarchy, Deletion and search.
-How to test: Download the code and run flask in venv. Currently there is only 1 registered user with name/password being asd/asd.
+## Current state 6.10
+## Features
+
+- Users can log in, log out, and create a new account. (Works)
+- The homepage displays a list of discussion areas with: 
+  - The number of threads and messages in each area.  (Works)
+  - The timestamp of the latest message.  (Works)
+- Users can:
+  - Create a new thread in an area by providing a thread title and an initial message. (Works)
+  - Post a new message to an existing thread.  (Works)
+  - Edit the title of threads they’ve created and the content of their own messages. (Doesn't work)
+  - Delete threads or messages they’ve posted.  (Doesn't work)
+  - Search for all messages containing a specific keyword. (Doesn't work)
+- Administrators can:
+  - Add or remove discussion areas. (Can add, can't remove)
+  - Create secret areas and assign specific users access to them. (Doesn't work)
+ 
+
+The current state of the program can be find in the master branch rather than the main branch due to technical difficutlties. 
+## How to test the program
+
+
+- Clone the repository and navigate within it
+- Create a virtual enviroment "python3 -m venv venv"
+- Activate virtual enviroment "source venv/bin/activate"
+- Install requirements "pip install -r requirement.txt"
+  - Note the requirement.txt might include OS specific libraries. If it doesn't work try pip install --ignore-installed - r requirements.txt
+- Create .env file and add the necessary variables: SECRET_KEY & DATABASE_URL
+- Create database and use schema.sql to initialize the database.
+
