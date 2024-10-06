@@ -15,13 +15,22 @@
         <h2>Discussion Areas</h2>
         <hr>
         {% if areas %}
+
+
             {% for area in areas %}
-                <h3>
-                    <a href="/discussion/{{ area.id }}">{{ area.name }}</a>
-                </h3>
-                <p>{{area.description}}</p>
-                <p>Number of Threads: {{ area.thread_count }}, Number of Messages: {{ area.message_count }}, Last message: {{ area.last_message_date }}</p>
-                <hr>
+                {% if not area.is_hidden %}
+                    <h3>
+                        <a href="/discussion/{{ area.id }}">{{ area.name }}</a>
+                    </h3>
+                    <p>{{area.description}}</p>
+                    <p>Number of Threads: {{ area.thread_count }}, Number of Messages: {{ area.message_count }}, Last message: {{ area.last_message_date }}</p>
+                    <hr>
+                    {% if session.role == "admin" %}
+                    <form action="/delete_area/{{ area.id }}" method="POST" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                {% endif %}
+                {% endif %}
             {% endfor %}
         {% else %}
             <p>No discussion areas available.</p>

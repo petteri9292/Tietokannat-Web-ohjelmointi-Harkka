@@ -25,7 +25,8 @@ def index():
       - The number of threads in the area
       - The number of messages across all threads in the area
       - The date of the latest message
-
+      - The variable is_hidden
+      - The variable is_secret
     The results are passed to the 'index.html' template for rendering.
 
     Returns:
@@ -36,6 +37,8 @@ def index():
                     da.id,
                     da.name,
                     da.description,
+                    da.is_hidden,
+                    da.is_secret,
                     COUNT(DISTINCt t.id) AS thread_count,
                     COUNT(m.id) AS message_count,
                     MAX(m.created_at) AS last_message_date
@@ -54,23 +57,7 @@ def index():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    """
-    Route to handle user registration.
 
-    If the request method is POST, this function:
-    - Retrieves the username, password, and confirmation password from the form.
-    - Validates that all fields are filled and that passwords match.
-    - Checks whether the username already exists in the database.
-    - Hashes the password and inserts the new user into the database.
-    - If the username is "admin", assigns the role of 'admin', otherwise assigns 'user'.
-    - Logs the user in by setting the session's username and redirects to the homepage.
-
-    If the request method is GET, the registration form is displayed.
-
-    Returns:
-        - On successful registration, redirects to the homepage ("/").
-        - If errors occur (e.g., empty fields, passwords do not match, username taken), renders the 'register.html' template with an error message.
-    """
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -130,7 +117,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    del session["username"]
+    session.clear()
     return redirect("/")
 
 @app.route("/send", methods=["POST"])
@@ -296,3 +283,14 @@ def post_reply():
 
     return redirect(f"/thread/{thread_id}")
 
+
+@app.route("/delete_area/<int:area_id>",methods=["POST"])
+def delete_area(area_id):
+    """
+    Function to hide a discussion area by flipping is_hidden to true
+    """
+    hide_area_query = text("UPDATE discussion_areas SET is_hidden = TRUE WHERE id = :area_id")
+    db.session.execute(hide_area_query, {"area_id": area_id})
+    db.session.commit()
+
+    return redirect("/")

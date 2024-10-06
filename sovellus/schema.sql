@@ -11,8 +11,10 @@ CREATE TABLE discussion_areas (
     name VARCHAR(100) NOT NULL,                   -- Name is required for a discussion area
     description TEXT,                             -- Description can be NULL
     is_secret BOOLEAN NOT NULL DEFAULT FALSE,     -- Default to not secret
+    is_hidden BOOLEAN NOT NULL DEFAULT FALSE,     -- Default to not hidden
     created_at TIMESTAMP NOT NULL DEFAULT NOW()   -- Automatically set creation date
 );
+
 
 CREATE TABLE threads (
     id SERIAL PRIMARY KEY,
