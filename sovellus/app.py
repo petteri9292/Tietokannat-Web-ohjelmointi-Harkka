@@ -16,7 +16,22 @@ db = SQLAlchemy(app)
 
 @app.route("/")
 def index():
+    """
+    Index page to display all discussion areas along with metadata.
 
+    This function handles the "/" route and queries the database for all 
+    discussion areas. For each discussion area, it retrieves:
+      - The name and description of the area
+      - The number of threads in the area
+      - The number of messages across all threads in the area
+      - The date of the latest message
+
+    The results are passed to the 'index.html' template for rendering.
+
+    Returns:
+        A rendered HTML template showing the list of discussion areas, 
+        along with their thread and message counts and the latest message date.
+    """
     sql_query = text("""SELECT 
                     da.id,
                     da.name,
@@ -39,6 +54,23 @@ def index():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    """
+    Route to handle user registration.
+
+    If the request method is POST, this function:
+    - Retrieves the username, password, and confirmation password from the form.
+    - Validates that all fields are filled and that passwords match.
+    - Checks whether the username already exists in the database.
+    - Hashes the password and inserts the new user into the database.
+    - If the username is "admin", assigns the role of 'admin', otherwise assigns 'user'.
+    - Logs the user in by setting the session's username and redirects to the homepage.
+
+    If the request method is GET, the registration form is displayed.
+
+    Returns:
+        - On successful registration, redirects to the homepage ("/").
+        - If errors occur (e.g., empty fields, passwords do not match, username taken), renders the 'register.html' template with an error message.
+    """
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -95,9 +127,6 @@ def login():
         
         return render_template("index.html", error="Invalid username or password")
 
-@app.route("/new")
-def new():
-    return render_template("new.html")
 
 @app.route("/logout")
 def logout():
