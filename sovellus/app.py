@@ -222,15 +222,46 @@ def thread(thread_id):
     """)
     thread = db.session.execute(query,{"thread_id":thread_id}).fetchone()
     if thread:
-        threads_query = text("""
+        messages_query = text("""
             SELECT 
-                *
-            FROM
-                messages
-            WHERE
-                thread_id = :thread_id
+                m.content, 
+                m.created_at, 
+                u.username
+            FROM messages m
+            JOIN users u ON m.user_id = u.id 
+            WHERE m.thread_id = :thread_id
+            ORDER BY m.created_at ASC
         """)
-        messages = db.session.execute(threads_query,{"thread_id":thread_id}).fetchall()
+        messages = db.session.execute(messages_query,{"thread_id":thread_id}).fetchall()
         return render_template("thread.html", messages=messages, thread=thread)
     else:
         return "Thread not found", 404
+    
+
+from flask import request, session, redirect, render_template
+from sqlalchemy import text
+
+@app.route("/post_reply", methods=["POST"])
+def post_reply():
+    thread_id = request.form.get("thread_id")
+    reply_content = request.form.get("reply_content")
+    user_id = session.get("user_id")
+
+    
+    if not thread_id or not reply_content:
+        return "Bad Request: Missing thread ID or reply content", 400
+
+    insert_message_query = text("""
+        INSERT INTO messages (content, thread_id, user_id, created_at, updated_at)
+        VALUES (:content, :thread_id, :user_id, NOW(), NOW())
+    """)
+    
+    db.session.execute(insert_message_query, {
+        "content": reply_content,
+        "thread_id": thread_id,
+        "user_id": user_id
+    })
+    db.session.commit()
+
+    return redirect(f"/thread/{thread_id}")
+
