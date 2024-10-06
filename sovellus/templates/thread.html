@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ thread.title }}</title>
+</head>
+<body>
+    <h1>{{ thread.title }}</h1>
+    <h2>Messages</h2>
+
+    <!-- Display the messages in the thread -->
+    {% if messages %}
+        <ul>
+        {% for message in messages %}
+            <li>
+                <p><strong>{{ message.username }}</strong> said on {{ message.created_at }}:</p>
+                <p>{{ message.content }}</p>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No messages in this thread.</p>
+    {% endif %}
+
+    <!-- Check if the user is logged in before showing reply form -->
+    {% if session.username %}
+        <h3>Post a Reply</h3>
+        <form action="/post_reply" method="POST">
+            <input type="hidden" name="thread_id" value="{{ thread.id }}">
+            <p>
+                <textarea name="reply_content" rows="4" cols="50" required></textarea>
+            </p>
+            <p>
+                <input type="submit" value="Post Reply">
+            </p>
+        </form>
+    {% else %}
+        <p>You must be logged in to post a reply. <a href="/login">Log in here</a>.</p>
+    {% endif %}
+
+    <!-- Add a link to go back to the discussion area -->
+    <p><a href="/">Back home</a></p>
+</body>
+</html>
