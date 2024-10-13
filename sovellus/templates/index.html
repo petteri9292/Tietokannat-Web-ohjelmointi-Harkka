@@ -26,7 +26,14 @@
                     </h3>
                     <p>{{area.description}}</p>
                     <div>Number of Threads: {{ area.thread_count }}, Number of Messages: {{ area.message_count }}</div>
-                    <div>Last message: {{ area.last_message_date.strftime(" %H:%M %d.%m.%Y ") }}</div>
+                    <div>
+                        {% if area.last_message_date %}
+                          Last message: {{ area.last_message_date.strftime(" %H:%M %d.%m.%Y ") }}
+                        {% else %}
+                          No messages yet
+                        {% endif %}
+                      </div>
+                      
                     <hr>
                     {% if session.role == "admin" %}
                     <form action="/delete_area/{{ area.id }}" method="POST" style="display:inline;">
