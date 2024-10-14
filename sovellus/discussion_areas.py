@@ -32,7 +32,7 @@ def create_area(name,description,is_secret):
     db.session.execute(sql, {"name": name, "description": description, "is_secret": is_secret})
     
     db.session.commit()
-    print(is_secret)
+
 
     return True
 

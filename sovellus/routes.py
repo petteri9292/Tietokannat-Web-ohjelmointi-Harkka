@@ -8,6 +8,7 @@ from os import getenv
 import authentication
 import discussion_areas
 import threads
+import search
 
 load_dotenv()
 
@@ -154,3 +155,14 @@ def post_reply():
 
 
     return redirect(f"/thread/{thread_id}")
+
+
+
+
+
+@app.route("/search_result",methods=["GET"])
+def result():
+    query = request.args["query"]
+    results = search.search(query)
+
+    return render_template("search_result.html",messages = results)
