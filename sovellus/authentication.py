@@ -37,6 +37,7 @@ def register(username,password):
     if username == "admin":
         insert_user_query = text("INSERT INTO users (username, password_hash, role, created_at)\
         VALUES (:username, :password_hash, 'admin', CURRENT_TIMESTAMP) RETURNING id")
+        session["role"] = "admin"
     else:
         insert_user_query = text("INSERT INTO users (username, password_hash, role, created_at)\
             VALUES (:username, :password_hash, 'user', CURRENT_TIMESTAMP) RETURNING id")

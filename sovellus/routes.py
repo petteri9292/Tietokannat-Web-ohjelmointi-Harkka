@@ -17,7 +17,7 @@ app.secret_key = getenv("SECRET_KEY")
 @app.route("/")
 def index():
     """
-    Index page to display all discussion discussion_areas along with metadata.
+    Index page to display all discussion areas the user has privileges to along with metadata.
 
     This function handles the "/" route and queries the database for all 
     discussion discussion_areas. For each discussion area, it retrieves:
@@ -26,14 +26,16 @@ def index():
       - The number of messages across all threads in the area
       - The date of the latest message
       - The variable is_hidden
-      - The variable is_secret
     The results are passed to the 'index.html' template for rendering.
 
     Returns:
         A rendered HTML template showing the list of discussion discussion_areas, 
         along with their thread and message counts and the latest message date.
     """
-    all_areas = discussion_areas.get_areas()
+    user_id = session.get("user_id")
+    user_role = session.get("role")
+
+    all_areas = discussion_areas.get_areas(user_id,user_role)
     return render_template("index.html", areas=all_areas)
 
 @app.route("/login",methods=["POST"])
@@ -65,7 +67,7 @@ def register():
             return render_template("register.html", error="Passwords do not match")
         
         if not authentication.register(username,password):
-            render_template("register.html", error="username already taken")
+            return render_template("register.html", error="username already taken")
 
         return redirect("/")
     
@@ -87,9 +89,13 @@ def new_area():
 def create_area():
     name = request.form["name"]
     description = request.form["description"]
-    is_secret = request.form.get("is_secret") == "on"
-
-    discussion_areas.create_area(name,description,is_secret)
+    is_secret = bool(request.form.get("is_secret"))
+    users = request.form.get("users").strip()
+    if users:
+        users = users.split(",")
+    else:
+        users = []
+    discussion_areas.create_area(name,description,is_secret,users)
 
     return redirect("/")
 

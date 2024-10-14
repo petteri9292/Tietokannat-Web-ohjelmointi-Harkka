@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create New Discussion Area</title>
+    
 </head>
 <body>
     <h1>Create a New Discussion Area</h1>
@@ -20,7 +21,14 @@
                 <label for="description">Description:</label><br>
                 <textarea id="description" name="description" rows="4" cols="50" required></textarea>
             </p>
-            
+            <p>
+                <label for="is_secret">Secret Area:</label>
+                <input type="checkbox" id="is_secret" name="is_secret" value="1">
+            </p>
+            <p>
+                <label for="users">Grant access to secret areas for users (comma-separated usernames):</label><br>
+                <input type="text" id="users" name="users" placeholder="user1, user2">
+            </p>
             <p>
                 <input type="submit" value="Create Area">
             </p>

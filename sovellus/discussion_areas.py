@@ -1,39 +1,73 @@
 from db import db
 from sqlalchemy.sql import text
 
-def get_areas():
-    sql_query = text("""SELECT 
+def get_areas(user_id,user_role):
+    if user_role == "admin":
+        sql_query = text("""SELECT 
+                    da.id,
+                    da.name,
+                    da.description,
+                    da.is_hidden,
+                    COUNT(DISTINCT t.id) AS thread_count,
+                    COUNT(m.id) AS message_count,
+                    MAX(m.created_at) AS last_message_date
+                    FROM
+                    discussion_areas da
+                    LEFT JOIN threads t ON da.id = t.discussion_area_id
+                    LEFT JOIN messages m ON t.id = m.thread_id
+                    GROUP BY da.id
+                    
+                    
+                    """)
+        result = db.session.execute(sql_query)
+        areas = result.fetchall()
+        return areas
+    else:
+        sql_query = text("""
+            SELECT 
                 da.id,
                 da.name,
                 da.description,
                 da.is_hidden,
                 da.is_secret,
-                COUNT(DISTINCt t.id) AS thread_count,
+                COUNT(DISTINCT t.id) AS thread_count,
                 COUNT(m.id) AS message_count,
                 MAX(m.created_at) AS last_message_date
-                FROM
+            FROM
                 discussion_areas da
-                LEFT JOIN threads t ON da.id = t.discussion_area_id
-                LEFT JOIN messages m ON t.id = m.thread_id
-                GROUP BY da.id
-                
-                
-                """)
-    result = db.session.execute(sql_query)
-    areas = result.fetchall()
-    return areas
+            LEFT JOIN threads t ON da.id = t.discussion_area_id
+            LEFT JOIN messages m ON t.id = m.thread_id
+            LEFT JOIN user_permissions up ON da.id = up.discussion_area_id AND up.user_id = :user_id
+            WHERE da.is_secret = FALSE OR up.user_id IS NOT NULL
+            GROUP BY da.id
+        """)
+        result = db.session.execute(sql_query,{"user_id":user_id})
+        areas = result.fetchall()
+        return areas
 
 
-def create_area(name,description,is_secret):
+def create_area(name,description,is_secret,users):
     sql = text("""
     INSERT INTO discussion_areas (name, description, is_secret, created_at)
     VALUES (:name, :description, :is_secret, NOW())
+    RETURNING id
     """)
-    db.session.execute(sql, {"name": name, "description": description, "is_secret": is_secret})
-    
+    result = db.session.execute(sql, {"name": name, "description": description, "is_secret": is_secret})
+    discussion_area_id = result.fetchone()[0]
     db.session.commit()
-
-
+    if is_secret:
+        print(users)
+        for username in users:
+            sql_query_user_id = text("SELECT id FROM users WHERE username = :username")
+            fetched_user_id = db.session.execute(sql_query_user_id,{"username":username}).fetchone()
+            if fetched_user_id:
+                sql_permissions = text("""
+                INSERT INTO user_permissions (user_id, discussion_area_id, granted_at)
+                VALUES (:user_id, :discussion_area_id, NOW())
+                """)
+                
+                db.session.execute(sql_permissions, {"user_id": fetched_user_id[0], "discussion_area_id": discussion_area_id})
+                db.session.commit()
     return True
 
 
