@@ -9,6 +9,7 @@ import authentication
 import discussion_areas
 import threads
 import search
+import messages
 
 load_dotenv()
 
@@ -87,15 +88,16 @@ def new_area():
 
 @app.route("/create_area", methods=["POST"])
 def create_area():
-    name = request.form["name"]
-    description = request.form["description"]
-    is_secret = bool(request.form.get("is_secret"))
-    users = request.form.get("users").strip()
-    if users:
-        users = users.split(",")
-    else:
-        users = []
-    discussion_areas.create_area(name,description,is_secret,users)
+    if session["role"] == "admin"
+        name = request.form["name"]
+        description = request.form["description"]
+        is_secret = bool(request.form.get("is_secret"))
+        users = request.form.get("users").strip()
+        if users:
+            users = users.split(",")
+        else:
+            users = []
+        discussion_areas.create_area(name,description,is_secret,users)
 
     return redirect("/")
 
@@ -118,7 +120,8 @@ def delete_area(area_id):
     """
     Function to hide a discussion area by flipping is_hidden to true
     """
-    discussion_areas.hide_area(area_id)
+    if session["role"] == "admin":
+        discussion_areas.hide_area(area_id)
 
     return redirect("/")
 
@@ -172,3 +175,73 @@ def result():
     results = search.search(query)
 
     return render_template("search_result.html",messages = results)
+
+
+@app.route("/edit_message/<int:message_id>", methods=["GET", "POST"])
+def edit_message(message_id):
+    # Fetch the message by ID
+    message = messages.get_message(message_id=message_id)
+
+    if not message:
+        return "Message not found"
+
+    # Check if the logged-in user is the author of the message or an admin
+    if message.user_id != session["user_id"] and session.get("role") != "admin":
+        return "Not authorized"
+
+    if request.method == "POST":
+        # Handle the message update
+        new_content = request.form["content"]
+        messages.edit_message(message_id=message_id,content=new_content)
+        return redirect(f"/thread/{message.thread_id}")  # Redirect to the thread where the message is
+
+    return render_template("edit_message.html", message=message)
+
+
+@app.route("/delete_message/<int:message_id>")
+def delete_message(message_id):
+    message = messages.get_message(message_id=message_id)
+    if message.user_id != session["user_id"] and session.get("role") != "admin":
+        return "Not authorized"
+    else:
+        messages.delete_message(message_id)
+        return redirect(f"/thread/{message.thread_id}")
+    
+
+
+@app.route("/edit_thread/<int:thread_id>", methods=["GET", "POST"])
+def edit_thread(thread_id):
+    # Fetch the thread and area by thread_ID
+    area,thread,_ = threads.get_thread(thread_id=thread_id)
+
+    if not thread:
+        return "Thread not found"
+
+    # Check if the logged-in user is the author of the thread or an admin
+    if thread.user_id != session["user_id"] and session.get("role") != "admin":
+        return "Not authorized"
+
+    if request.method == "POST":
+        # Handle the thread update
+        new_title = request.form["title"]
+        threads.edit_thread(thread_id=thread_id, title=new_title)
+        return redirect(f"/discussion/{area.id}")  # Redirect to the area after editing
+
+    return render_template("edit_thread.html", thread=thread)
+
+
+@app.route("/delete_thread/<int:thread_id>", methods=["GET","POST"])
+def delete_thread(thread_id):
+    # Fetch the thread and area by thread_ID
+    area,thread,_ = threads.get_thread(thread_id=thread_id)
+
+    if not thread:
+        return "Thread not found"
+
+    # Check if the logged-in user is the author of the thread or an admin
+    if thread.user_id != session["user_id"] and session.get("role") != "admin":
+        return "Not authorized"
+
+    # Soft delete the thread
+    threads.delete_thread(thread_id)
+    return redirect(f"/discussion/{area.id}")  # Redirect to the discussion area after deleting

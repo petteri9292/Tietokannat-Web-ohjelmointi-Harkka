@@ -30,8 +30,8 @@ The application displays discussion areas, each with a specific topic. These are
 - Users can:
   - Create a new thread in an area by providing a thread title and an initial message. (Works)
   - Post a new message to an existing thread.  (Works)
-  - Edit the title of threads they’ve created and the content of their own messages. (Doesn't work)
-  - Delete threads or messages they’ve posted.  (Doesn't work)
+  - Edit the title of threads they’ve created and the content of their own messages. (Works)
+  - Delete threads or messages they’ve posted.  (Works)
   - Search for all messages containing a specific keyword. (Works)
 - Administrators can:
   - Add or remove discussion areas. (Works)

@@ -18,10 +18,22 @@
         {% if messages %}
             <ul>
             {% for message in messages %}
-                <li>
-                    <p><strong>{{ message.username }}</strong> said on {{ message.created_at.strftime(" %H:%M %d.%m.%Y ") }}</p>
-                    <p>{{ message.content }}</p>
-                </li>
+                {% if not message.is_hidden %}
+                    <li>
+                        <p><strong>{{ message.username }}</strong> said on {{ message.created_at.strftime(" %H:%M %d.%m.%Y ") }}</p>
+                        <p> 
+                        {% if message.updated_at > message.created_at %}
+                                <em>(Edited on {{ message.updated_at.strftime(" %H:%M %d.%m.%Y ") }})</em>
+                            {% endif %}
+                            </p>
+                        <p>{{ message.content }}</p>
+                        {% if message.username == session.username or session.role == 'admin' %}
+                        <!-- Edit and delete buttons visible only to the author of message-->
+                            <a href="/edit_message/{{ message.id }}">Edit</a>
+                            <a href="/delete_message/{{ message.id }}" onclick="return confirm('Are you sure you want to delete this message?');">Delete</a>
+                        {% endif %}
+                    </li>
+                {% endif %}
             {% endfor %}
             </ul>
         {% else %}

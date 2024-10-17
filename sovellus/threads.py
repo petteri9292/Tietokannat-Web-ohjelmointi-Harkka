@@ -44,7 +44,10 @@ def get_thread(thread_id):
             SELECT 
                 m.content, 
                 m.created_at, 
-                u.username
+                u.username,
+                m.id,
+                m.updated_at,
+                m.is_hidden
             FROM messages m
             LEFT JOIN users u ON m.user_id = u.id
             WHERE m.thread_id = :thread_id
@@ -88,3 +91,17 @@ def add_message(reply_content,thread_id,user_id):
         "user_id": user_id
     })
     db.session.commit()
+
+
+def edit_thread(thread_id, title):
+    update_query = text("UPDATE threads SET title = :title, updated_at = NOW() WHERE id = :thread_id")
+    db.session.execute(update_query, {"title": title, "thread_id": thread_id})
+    db.session.commit()
+    return True
+
+
+def delete_thread(thread_id):
+    delete_query = text("UPDATE threads SET is_hidden = True, updated_at = NOW() WHERE id = :thread_id")
+    db.session.execute(delete_query, {"thread_id": thread_id})
+    db.session.commit()
+    return True
