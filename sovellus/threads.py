@@ -66,7 +66,7 @@ def get_thread(thread_id):
         """)
         area = db.session.execute(area_query,{"thread_id":thread_id}).fetchone()
         if area[1]:
-            if not area[0] in session["permissions"]:
+            if not area[0] in session["permissions"] and session["role"] != "admin":
                 return False, False, False
             else:
                 return area, thread,messages

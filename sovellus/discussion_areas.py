@@ -76,12 +76,31 @@ def get_area_by_id(area_id):
         SELECT id,name,is_secret FROM discussion_areas WHERE id = :area_id
     """)
     area = db.session.execute(query,{"area_id":area_id}).fetchone()
+    print(session["role"]=="admin")
     if area:
-        print("Salattu:",area[2],"Alue: ",area[0])
-        print("Luvat: ",session["permissions"])
         if area[2] and not area[0] in session["permissions"]:
+            if session["role"] == "admin":
+                threads_query = text("""
+                SELECT 
+                    t.id,
+                    t.title,
+                    t.created_at,
+                    u.username AS author,
+                    COUNT(m.id) AS message_count
+                        
+                FROM 
+                    threads t
+                JOIN users u ON t.user_id = u.id
+                LEFT JOIN messages m ON t.id = m.thread_id
+                WHERE t.discussion_area_id = :area_id
+                GROUP BY t.id, u.username
+                ORDER BY t.created_at DESC
+            """)
+                threads = db.session.execute(threads_query,{"area_id":area_id}).fetchall()
+                return True, area, threads
             return False,None, None
         else:
+
             threads_query = text("""
                 SELECT 
                     t.id,
