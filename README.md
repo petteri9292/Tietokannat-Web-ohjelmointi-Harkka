@@ -32,10 +32,10 @@ The application displays discussion areas, each with a specific topic. These are
   - Post a new message to an existing thread.  (Works)
   - Edit the title of threads they’ve created and the content of their own messages. (Doesn't work)
   - Delete threads or messages they’ve posted.  (Doesn't work)
-  - Search for all messages containing a specific keyword. (Doesn't work)
+  - Search for all messages containing a specific keyword. (Works)
 - Administrators can:
   - Add or remove discussion areas. (Works)
-  - Create secret areas and assign specific users access to them. (Doesn't work)
+  - Create secret areas and assign specific users access to them. (Works)
  
 
 The current state of the program can be find in the master branch rather than the main branch due to technical difficutlties. 
