@@ -1,5 +1,6 @@
 from db import db
 from sqlalchemy.sql import text
+from flask import session
 
 def get_areas(user_id,user_role):
     if user_role == "admin":
@@ -56,7 +57,6 @@ def create_area(name,description,is_secret,users):
     discussion_area_id = result.fetchone()[0]
     db.session.commit()
     if is_secret:
-        print(users)
         for username in users:
             sql_query_user_id = text("SELECT id FROM users WHERE username = :username")
             fetched_user_id = db.session.execute(sql_query_user_id,{"username":username}).fetchone()
@@ -73,28 +73,33 @@ def create_area(name,description,is_secret,users):
 
 def get_area_by_id(area_id):
     query = text("""
-        SELECT id,name FROM discussion_areas WHERE id = :area_id
+        SELECT id,name,is_secret FROM discussion_areas WHERE id = :area_id
     """)
     area = db.session.execute(query,{"area_id":area_id}).fetchone()
     if area:
-        threads_query = text("""
-            SELECT 
-                t.id,
-                t.title,
-                t.created_at,
-                u.username AS author,
-                COUNT(m.id) AS message_count
-                    
-            FROM 
-                threads t
-            JOIN users u ON t.user_id = u.id
-            LEFT JOIN messages m ON t.id = m.thread_id
-            WHERE t.discussion_area_id = :area_id
-            GROUP BY t.id, u.username
-            ORDER BY t.created_at DESC
-        """)
-        threads = db.session.execute(threads_query,{"area_id":area_id}).fetchall()
-        return True, area, threads
+        print("Salattu:",area[2],"Alue: ",area[0])
+        print("Luvat: ",session["permissions"])
+        if area[2] and not area[0] in session["permissions"]:
+            return False,None, None
+        else:
+            threads_query = text("""
+                SELECT 
+                    t.id,
+                    t.title,
+                    t.created_at,
+                    u.username AS author,
+                    COUNT(m.id) AS message_count
+                        
+                FROM 
+                    threads t
+                JOIN users u ON t.user_id = u.id
+                LEFT JOIN messages m ON t.id = m.thread_id
+                WHERE t.discussion_area_id = :area_id
+                GROUP BY t.id, u.username
+                ORDER BY t.created_at DESC
+            """)
+            threads = db.session.execute(threads_query,{"area_id":area_id}).fetchall()
+            return True, area, threads
     else:
         return False,None, None
     

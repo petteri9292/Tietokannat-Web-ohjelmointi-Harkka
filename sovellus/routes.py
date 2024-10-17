@@ -110,7 +110,7 @@ def get_discussion_area(area_id):
     if area_found:
         return render_template("discussion_area.html", threads=threads, area=area)
     else:
-        return "Discussion area not found", 404
+        return "Discussion area not found or user unauthorized"
     
 
 @app.route("/delete_area/<int:area_id>",methods=["POST"])

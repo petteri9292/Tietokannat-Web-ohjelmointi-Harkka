@@ -14,9 +14,26 @@ def login(username,password):
 
         if check_password_hash(stored_password_hash, password):
             
+            user_permissions_query = text("""
+                SELECT up.discussion_area_id 
+                FROM user_permissions up 
+                JOIN users u ON up.user_id = u.id 
+                WHERE u.username = :username
+            """)
+
+
+            permissions = db.session.execute(user_permissions_query,{"username":username})
+            permissions = permissions.fetchall()
+
             session["username"] = username
             session["role"] = user_row[3]
             session["user_id"] = user_row[0]
+            try:
+                #This try-excepts is because permissions can type None
+                session["permissions"] = [i[0] for i in permissions]
+            except:
+                session["permissions"] = []
+            print(session.get("permissions"))
             return True
 
         else:
@@ -45,6 +62,7 @@ def register(username,password):
     
     session["username"] = username
     session["user_id"] = result.fetchone()[0]
+
 
     db.session.commit()
     return True

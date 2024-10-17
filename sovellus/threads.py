@@ -54,7 +54,7 @@ def get_thread(thread_id):
 
         area_query = text("""
             SELECT
-                da.id
+                da.id,da.is_secret
             FROM
                 discussion_areas da
             JOIN
@@ -65,7 +65,13 @@ def get_thread(thread_id):
                 t.id = :thread_id
         """)
         area = db.session.execute(area_query,{"thread_id":thread_id}).fetchone()
-        return area, thread,messages
+        if area[1]:
+            if not area[0] in session["permissions"]:
+                return False, False, False
+            else:
+                return area, thread,messages
+        else:
+            return area, thread,messages
     else:
         return False, False, False
     
