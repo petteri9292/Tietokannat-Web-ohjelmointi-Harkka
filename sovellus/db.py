@@ -1,8 +1,8 @@
-from app import app
-from flask_sqlalchemy import SQLAlchemy
 from os import getenv
+from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 
+from app import app
 
 load_dotenv()
 

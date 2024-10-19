@@ -36,7 +36,7 @@ def create_thread(title,user_id,area_id,first_message):
 
 def get_thread(thread_id):
     query = text("""
-        SELECT id,title,user_id FROM threads WHERE id = :thread_id
+        SELECT id,title,user_id FROM threads WHERE id = :thread_id ORDER BY id DESC
     """)
     thread = db.session.execute(query,{"thread_id":thread_id}).fetchone()
     if thread:

@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create New Discussion Area</title>
-    
-</head>
-<body>
+{% extends "layout.html" %}
+
+{% block title %}
+    Create New Discussion Area
+{% endblock %}
+
+{% block content %}
     <h1>Create a New Discussion Area</h1>
     <hr>
+    
     <!-- Check if the user is logged in and is an admin -->
     {% if session.username and session.role == 'admin' %}
         <!-- Form for creating a new discussion area (only visible to admins) -->
@@ -31,6 +30,7 @@
             </p>
             <p>
                 <input type="submit" value="Create Area">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             </p>
         </form>
     {% else %}
@@ -40,5 +40,4 @@
 
     <!-- Link back to home or discussion areas list -->
     <p><a href="/">Back to Home</a></p>
-</body>
-</html>
+{% endblock %}

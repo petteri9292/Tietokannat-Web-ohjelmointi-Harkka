@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class = "header">
+        <div class="logo">
+            <a href="/">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo_img">
+            </a>
+            <a href="/" class="logo_text"><h1>Keskustelufoorumi</h1></a>
+        </div>
+        {% if session.username %}
+            <div class="linkki"><p>Logged in as: {{ session.username }}</p></div>
+            <div class="header_text">
+            
+                <a class ="linkki" href="/">Home</a>
+                <a class ="linkki" href="/logout">Logout</a>
+                <form action="/search_result" method="GET" class="search_bar">
+                    <label for="query">Search:</label>
+                    <input type="text" name="query" id="query" required>
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+        {% else %}
+            <a class = "linkki" href="/register">Register</a>
+            <a class = "linkki" href="/">Log in</a>
+        {% endif %}
+    </header>
+
+    <hr>
+
+    <!-- Main content block -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <hr>
+
+    <!-- Footer (optional) -->
+    <footer class="footer">
+        {% if session.username %}
+            <a class ="linkki" href="/">Home</a>
+            <a class ="linkki" href="/logout">Logout</a>
+        {% else %}
+            <a class = "linkki" href="/register">Register</a>
+            <a class = "linkki" href="/">Log in</a>
+        {% endif %}
+    </footer>
+
+</body>
+
+</html>

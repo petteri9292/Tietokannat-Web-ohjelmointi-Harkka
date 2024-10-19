@@ -1,76 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-</head>
-<body>
+{% extends "layout.html" %}
 
+{% block title %}
+    Home
+{% endblock %}
 
-
+{% block content %}
     {% if session.username %}
-        <p>{{ session.username }}</p>
-        <!-- <p>User_role is {{ session.role }}</p> -->
-        <a href="/">Home</a>
-        <a href="/logout">Logout</a>
-        <form action="/search_result" method="GET">
-            <p>
-                <label for="query">Search:</label><br>
-                <input type="text" name="query" id="query" required>
-                <input type="submit" value="Submit">
-            </p> 
-        </form>
-
+        <!-- Discussion Areas Section -->
         <h2>Discussion Areas</h2>
-        <hr>
         {% if areas %}
-
-
             {% for area in areas %}
                 {% if not area.is_hidden %}
-                    <h3>
-                        <a href="/discussion/{{ area.id }}">{{ area.name }}</a>
-                    </h3>
-                    <p>{{area.description}}</p>
-                    <div>Number of Threads: {{ area.thread_count }}, Number of Messages: {{ area.message_count }}</div>
-                    <div>
+                    <div class="area">
+                        <h3>
+                            <a href="/discussion/{{ area.id }}">{{ area.name }}</a>
+                        </h3>
+                        <p>{{ area.description }}</p>
+                        <p>Number of Threads: {{ area.thread_count }}, Number of Messages: {{ area.message_count }}</p>
                         {% if area.last_message_date %}
-                          Last message: {{ area.last_message_date.strftime(" %H:%M %d.%m.%Y ") }}
+                            <p>Last message: {{ area.last_message_date.strftime(" %H:%M %d.%m.%Y ") }}</p>
                         {% else %}
-                          No messages yet
+                            <p>No messages yet</p>
                         {% endif %}
-                      </div>
-                      
-                    <hr>
-                    {% if session.role == "admin" %}
-                    <form action="/delete_area/{{ area.id }}" method="POST" style="display:inline;">
-                        <button type="submit">Delete</button>
-                    </form>
-                {% endif %}
+                        <!-- Admin Delete Button for Areas -->
+                        {% if session.role == "admin" %}
+                            <a href="/delete_area/{{ area.id }}" onclick="return confirm('Are you sure you want to delete this message?');">Delete</a>
+                        {% endif %}
+                    </div>    
                 {% endif %}
             {% endfor %}
         {% else %}
             <p>No discussion areas available.</p>
         {% endif %}
+
+        <!-- Admin Option to Create New Area -->
         {% if session.role == "admin" %}
             <a href="/new_area">Create new area</a>
         {% endif %}
 
-        
     {% else %}
+        <!-- Login form for guests -->
         <form action="/login" method="POST">
             <p>Username:<br>
-            <input type="text" name="username" required></p>
+                <input type="text" name="username" required></p>
             <p>Password:<br>
-            <input type="password" name="password" required></p>
+                <input type="password" name="password" required></p>
             <input type="submit" value="Login">
         </form>
+
+        <!-- Error Message -->
         {% if error %}
-        <p style="color:red;">{{ error }}</p>
+            <p style="color:red;">{{ error }}</p>
         {% endif %}
+
         <!-- Registration link -->
         <a href="/register">Register</a>
     {% endif %}
-</body>
-</html>
+{% endblock %}

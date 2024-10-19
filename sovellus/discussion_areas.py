@@ -3,8 +3,14 @@ from sqlalchemy.sql import text
 from flask import session
 
 def get_areas(user_id,user_role):
+    """
+    A function to return all areas that should be visible to user.
+
+    Returns:
+        All the areas that will be displayed for the user. This depends on the user permissions
+    """
     if user_role == "admin":
-        sql_query = text("""SELECT 
+        sql_query = text("""SELECT
                     da.id,
                     da.name,
                     da.description,
@@ -17,8 +23,6 @@ def get_areas(user_id,user_role):
                     LEFT JOIN threads t ON da.id = t.discussion_area_id
                     LEFT JOIN messages m ON t.id = m.thread_id
                     GROUP BY da.id
-                    
-                    
                     """)
         result = db.session.execute(sql_query)
         areas = result.fetchall()
@@ -48,12 +52,20 @@ def get_areas(user_id,user_role):
 
 
 def create_area(name,description,is_secret,users):
+    """
+    A function to create new areas.
+
+
+    Returns:
+        True if succesfully create a new area
+    """
     sql = text("""
     INSERT INTO discussion_areas (name, description, is_secret, created_at)
     VALUES (:name, :description, :is_secret, NOW())
     RETURNING id
     """)
-    result = db.session.execute(sql, {"name": name, "description": description, "is_secret": is_secret})
+    result = db.session.execute(sql, {"name": name, "description": description,
+                                    "is_secret": is_secret})
     discussion_area_id = result.fetchone()[0]
     db.session.commit()
     if is_secret:
@@ -65,8 +77,9 @@ def create_area(name,description,is_secret,users):
                 INSERT INTO user_permissions (user_id, discussion_area_id, granted_at)
                 VALUES (:user_id, :discussion_area_id, NOW())
                 """)
-                
-                db.session.execute(sql_permissions, {"user_id": fetched_user_id[0], "discussion_area_id": discussion_area_id})
+
+                db.session.execute(sql_permissions, {"user_id": fetched_user_id[0],
+                                                      "discussion_area_id": discussion_area_id})
                 db.session.commit()
     return True
 
@@ -93,7 +106,7 @@ def get_area_by_id(area_id):
                 LEFT JOIN messages m ON t.id = m.thread_id
                 WHERE t.discussion_area_id = :area_id
                 GROUP BY t.id, u.username
-                ORDER BY t.created_at DESC
+                ORDER BY t.created_at ASC
             """)
                 threads = db.session.execute(threads_query,{"area_id":area_id}).fetchall()
                 return True, area, threads
@@ -115,12 +128,12 @@ def get_area_by_id(area_id):
                 LEFT JOIN messages m ON t.id = m.thread_id
                 WHERE t.discussion_area_id = :area_id
                 GROUP BY t.id, u.username
-                ORDER BY t.created_at DESC
+                ORDER BY t.created_at ASC
             """)
             threads = db.session.execute(threads_query,{"area_id":area_id}).fetchall()
             return True, area, threads
     else:
-        return False,None, None
+        return False, None, None
     
 def hide_area(area_id):
     hide_area_query = text("UPDATE discussion_areas SET is_hidden = TRUE WHERE id = :area_id")

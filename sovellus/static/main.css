@@ -1,0 +1,56 @@
+body {
+    margin: auto;
+    max-width: 60em;
+}
+.header {
+    background: rgb(54, 143, 175);
+}
+.footer {
+    background: rgb(54, 143, 175);
+}
+.message {
+    border: 1px solid rgb(54, 143, 175); /* Blue border */
+    padding: 10px;                      /* Padding inside the border */
+    margin: 10px;                        /* Adds some space around the message */
+    word-wrap: break-word;       
+    overflow-wrap: break-word;
+}
+.area {
+    border: 1px solid rgb(54, 143, 175); /* Blue border */
+    padding: 10px;                      /* Padding inside the border */
+    margin: 10px;                        /* Adds some space around the area */
+    word-wrap: break-word;       
+    overflow-wrap: break-word;
+}
+.thread {
+    border: 1px solid rgb(54, 143, 175); /* Blue border */
+    padding: 10px;                      /* Padding inside the border */
+    margin: 10px;                        /* Adds some space around the thread */
+    word-wrap: break-word;       
+    overflow-wrap: break-word;
+}
+.logo_img {
+    width: 50px;  /* Define the width of the logo */
+    height: auto;  /* Maintain the aspect ratio */
+}
+.logo {
+    display: flex;
+    align-items: center;
+    font-style: italic;
+}
+.logo_text {
+    color:beige;
+}
+.header_text{
+    display: flex;
+    align-items: center;
+}
+.search_bar{
+    margin-left: auto;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+.linkki {
+    margin-bottom: 10px;
+    margin-left: 10px;
+}

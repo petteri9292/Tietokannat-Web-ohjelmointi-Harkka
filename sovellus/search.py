@@ -7,7 +7,9 @@ def search(query):
             m.updated_at AS updated_at,
             u.username AS username,
             da.name AS area,
-            t.title AS thread
+            t.title AS thread,
+            da.id AS area_id,
+            t.id AS thread_id
         FROM messages m
         JOIN threads t ON m.thread_id = t.id
         JOIN discussion_areas da ON t.discussion_area_id = da.id 
